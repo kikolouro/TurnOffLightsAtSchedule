@@ -3,8 +3,11 @@ if [ "$#" -eq "0" ]; then
     echo "no arguments supplied"
     exit 1
 fi
-
-for var in "$@"
+ARGS=""
+CONT=1
+for var in "$@";
 do
-    docker run -e light=$var --net=host turnofflightatschedule:latest
+    ARGS+="-e light$CONT=$var "
+    CONT=$((CONT+1))
 done
+docker run $ARGS --net=host turnofflightatschedule:latest
