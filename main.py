@@ -3,7 +3,10 @@ import asyncio
 from xknx import XKNX
 from xknx.devices import Light
 from xknx.core import ValueReader
-from xknx.telegram import GroupAddress
+from xknx.io import GatewayScanner, UDPTunnel
+from xknx.telegram import GroupAddress, IndividualAddress, Telegram
+from xknx.telegram.apci import GroupValueWrite
+from xknx.dpt import DPTBinary
 
 
 def getGroupAddresses():
@@ -11,23 +14,38 @@ def getGroupAddresses():
     for var in os.environ:
         if var.startswith('light'):
             groupAddresses.append(os.environ[var])
-    # print(groupAddresses)
+    print(groupAddresses)
     return groupAddresses
 
 
 async def main():
     xknx = XKNX()
-    await xknx.start()
+    gatewayscanner = GatewayScanner(xknx)
+    gateways = await gatewayscanner.scan()
     groupAddresses = getGroupAddresses()
     for groupAddress in groupAddresses:
+        await xknx.start()
+        if not gateways:
+            print("No Gateways found")
+            return
+        for gateway in gateways:
+            tunnel = UDPTunnel(
+                xknx,
+                gateway_ip=gateway.ip_addr,
+                gateway_port=gateway.port,
+                local_ip=gateway.local_ip,
+                local_port=0,
+                route_back=False,
+            )
+            await tunnel.connect()
+            await tunnel.send_telegram(
+                Telegram(
+                    destination_address=GroupAddress(f"{groupAddress}"),
+                    payload=GroupValueWrite(DPTBinary(0)),
+                )
+            )
 
-        light = Light(xknx,
-                      name='HelloWorldLight',
-                      group_address_switch=f"{groupAddress}")
-        await light.sync(wait_for_result=True)
-        await light.set_off()
-
-    await xknx.stop()
-
+        await xknx.stop()
+        await tunnel.disconnect()
 # getGroupAddresses()
 asyncio.run(main())
