@@ -30,3 +30,4 @@ You need two things:
 
 ### Want to help?
 Just fork the repository and make a pull request. Please use [Convetional Commits](https://www.conventionalcommits.org/en/v1.0.0-beta.2/)
+GUI development on [TurnOffLightsAtScheduleGUI Repository](https://github.com/kikolouro/TurnOffLightsAtScheduleGUI)
