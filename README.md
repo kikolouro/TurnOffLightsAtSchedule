@@ -25,8 +25,8 @@ You need two things:
    - <output_path> is the path of the output file, if you don't want output file use /dev/null
 
 ### Roadmap
-- Logging, which lights turned off at what schedule
-- Gui for easy configuration
+- [x] Logging, which lights turned off at what schedule
+- [ ] Gui for easy configuration
 
 ### Want to help?
 Just fork the repository and make a pull request. Please use [Convetional Commits](https://www.conventionalcommits.org/en/v1.0.0-beta.2/)

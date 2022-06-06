@@ -10,4 +10,4 @@ do
     ARGS+="-e light$CONT=$var "
     CONT=$((CONT+1))
 done
-docker run $ARGS --net=host turnofflightatschedule:latest
+docker run $ARGS -v $(pwd)/logs:/logs --net=host turnofflightatschedule:latest
